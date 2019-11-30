@@ -37,7 +37,7 @@ func main() {
 		user.Name = c.Query("name")
 		user.Score, _ = strconv.Atoi(c.Query("score"))
 
-		_, err := client.Collection("tng-pjam2019").Doc("ranking").Set(ctx, map[string]interface{}{
+		_, _, err := client.Collection("user").Add(ctx, map[string]interface{}{
 			"name":  user.Name,
 			"score": user.Score,
 		})
