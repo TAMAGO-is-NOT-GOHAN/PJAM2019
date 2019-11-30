@@ -20,7 +20,7 @@ func main() {
 	router := gin.Default()
 
 	ctx := context.Background()
-	conf := &firebase.Config{ProjectID: projectID}
+	conf := &firebase.Config{ProjectID: "tng-pjam2019"}
 	app, err := firebase.NewApp(ctx, conf)
 	if err != nil {
 		log.Fatalln(err)
@@ -38,8 +38,8 @@ func main() {
 		user.Score, _ = strconv.Atoi(c.Query("score"))
 
 		_, err := client.Collection("tng-pjam2019").Doc("ranking").Set(ctx, map[string]interface{}{
-			"name":    user.Name,
-			"score":   user.Score,
+			"name":  user.Name,
+			"score": user.Score,
 		})
 		if err != nil {
 			log.Printf("An error has occurred: %s", err)
