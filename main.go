@@ -11,6 +11,7 @@ import (
   "google.golang.org/api/iterator"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/appengine"
+  "sort"
 )
 
 type User struct {
@@ -51,6 +52,10 @@ func main() {
       doc.DataTo(&tmp)
       resultData = append(resultData, tmp)
     }
+
+    sort.Slice(resultData, func(i, j int) bool {
+      return resultData[i].Score > resultData[j].Score
+    })
 
     c.JSON(200, resultData)
 	})
