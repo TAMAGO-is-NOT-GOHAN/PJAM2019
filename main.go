@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"log"
+  "fmt"
 	"net/http"
 	"strconv"
 
 	firebase "firebase.google.com/go"
+  "google.golang.org/api/iterator"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/appengine"
 )
@@ -32,7 +34,28 @@ func main() {
 	}
 	defer client.Close()
 
-	router.GET("/", func(c *gin.Context) {
+	router.GET("/getRanking", func(c *gin.Context) {
+    iter := client.Collection("user").Documents(ctx)
+    var resultData []User
+
+    for {
+      doc, err := iter.Next()
+      var tmp User
+      if err == iterator.Done {
+        break
+      }
+      if err != nil {
+        return
+      }
+      fmt.Println(doc.Data())
+      doc.DataTo(&tmp)
+      resultData = append(resultData, tmp)
+    }
+
+    c.JSON(200, resultData)
+	})
+
+	router.GET("/postResult", func(c *gin.Context) {
 		var user User
 		user.Name = c.Query("name")
 		user.Score, _ = strconv.Atoi(c.Query("score"))
@@ -45,7 +68,7 @@ func main() {
 			log.Printf("An error has occurred: %s", err)
 		}
 
-		c.String(http.StatusOK, "Hello World!")
+		c.String(http.StatusOK, "Hello!")
 	})
 
 	http.Handle("/", router)
