@@ -63,19 +63,15 @@ func main() {
       return resultData[i].Score > resultData[j].Score
     })
 
-    var ranking [5]Rank
+    var ranking []Rank
 
     if len(resultData) > 4 {
       for i := 0; i < 5; i++ {
-        ranking[i].Data.Name = resultData[i].Name
-        ranking[i].Data.Score = resultData[i].Score
-        ranking[i].Ranking = i + 1
+        ranking = append(ranking, Rank{resultData[i], i + 1})
       }
     } else {
       for i := 0; i < len(resultData); i++ {
-        ranking[i].Data.Name = resultData[i].Name
-        ranking[i].Data.Score = resultData[i].Score
-        ranking[i].Ranking = i + 1
+        ranking = append(ranking, Rank{resultData[i], i + 1})
       }
     }
 
