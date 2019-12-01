@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 //	"os/user"
+  "strconv"
 	"log"
   "fmt"
 	"net/http"
@@ -19,11 +20,13 @@ type User struct {
 	Score int    `json:"score"`
 }
 
-type Rank struct {
-  Data User `json:"user"`
-  Ranking int `json:"rank"`
+type Ranking struct {
+  Rank1 User `json:"rank1"`
+  Rank2 User `json:"rank2"`
+  Rank3 User `json:"rank3"`
+  Rank4 User `json:"rank4"`
+  Rank5 User `json:"rank5"`
 }
-
 
 func main() {
 	router := gin.Default()
@@ -41,9 +44,13 @@ func main() {
 	}
 	defer client.Close()
 
-	router.GET("/getRanking", func(c *gin.Context) {
+	router.GET("/getRanking/:number", func(c *gin.Context) {
     iter := client.Collection("user").Documents(ctx)
     var resultData []User
+
+    number := c.Params.ByName("number")
+
+    num, _ := strconv.Atoi(number)
 
     for {
       doc, err := iter.Next()
@@ -63,19 +70,13 @@ func main() {
       return resultData[i].Score > resultData[j].Score
     })
 
-    var ranking []Rank
+    var res string
 
-    if len(resultData) > 4 {
-      for i := 0; i < 5; i++ {
-        ranking = append(ranking, Rank{resultData[i], i + 1})
-      }
-    } else {
-      for i := 0; i < len(resultData); i++ {
-        ranking = append(ranking, Rank{resultData[i], i + 1})
-      }
-    }
+    tmpNum := strconv.Itoa(resultData[num - 1].Score)
 
-    c.JSON(200, ranking)
+    res = number + "位" + " " + resultData[num - 1].Name + " " + tmpNum
+
+    c.String(200, res)
 	})
 
 	router.POST("/postResult", func(c *gin.Context) {
