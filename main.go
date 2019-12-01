@@ -5,7 +5,6 @@ import (
 	"log"
   "fmt"
 	"net/http"
-	"strconv"
 
 	firebase "firebase.google.com/go"
   "google.golang.org/api/iterator"
@@ -60,10 +59,9 @@ func main() {
     c.JSON(200, resultData)
 	})
 
-	router.GET("/postResult", func(c *gin.Context) {
-		var user User
-		user.Name = c.Query("name")
-		user.Score, _ = strconv.Atoi(c.Query("score"))
+	router.POST("/postResult", func(c *gin.Context) {
+    var user User
+    c.BindJSON(&user)
 
 		_, _, err := client.Collection("user").Add(ctx, map[string]interface{}{
 			"name":  user.Name,
